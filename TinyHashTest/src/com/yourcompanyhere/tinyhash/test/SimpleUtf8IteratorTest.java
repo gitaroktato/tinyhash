@@ -1,6 +1,5 @@
 package com.yourcompanyhere.tinyhash.test;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -34,7 +33,7 @@ public class SimpleUtf8IteratorTest extends TestCase {
 	
 	public void testIterationWithNotAscii() throws CharacterCodingException {
 		SimpleUtf8Iterator it = new SimpleUtf8Iterator();
-		String expected = "é";
+		String expected = "Ã¡";
 		String value = "";
 		int iterations = 0;
 		for(; iterations != 65535 && !expected.equals(value); iterations++) {
@@ -56,7 +55,7 @@ public class SimpleUtf8IteratorTest extends TestCase {
 	
 	public void testIterationWithSimpleWords() throws Exception {
 		SimpleUtf8Iterator it = new SimpleUtf8Iterator();
-		String expected = "oé";
+		String expected = "dog";
 		byte[] expectedValue = expected.getBytes("UTF8");
 		String value = "";
 		int iterations = 0;
@@ -67,7 +66,7 @@ public class SimpleUtf8IteratorTest extends TestCase {
 	}
 	
 	public void testImplementation() throws Exception {
-		String expected = "oé";
+		String expected = "oÃ©";
 		byte[] gotValue = expected.getBytes("UTF8");
 		byte[] expectedValue = {0, 0, 111, -23};
 		ByteBuffer data = ByteBuffer.wrap(expectedValue, 2, 2);

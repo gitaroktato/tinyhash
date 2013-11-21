@@ -26,10 +26,15 @@ public class Utf8IteratorTest extends TestCase {
 		Utf8Iterator it = new Utf8Iterator();
 		String value = "";
 		String expected = "da";
+		byte[] expectedBytes = expected.getBytes();
 		int iterations = 0;
-		while(!value.equals(expected) && iterations < 16000) {
-			value = it.next();
-			iterations++;
+		try {
+			while(!value.equals(expected)) {
+				value = it.next();
+				iterations++;
+			}
+		} catch (CharacterCodingException ex) {
+			throw new RuntimeException("" + iterations, ex);
 		}
 		Assert.assertEquals("Got wrong value after end of iteration", expected, value);
 	}
@@ -40,7 +45,7 @@ public class Utf8IteratorTest extends TestCase {
 		String expected = "ú";
 		int iterations = 0;
 		try {
-			while(!value.equals(expected) && iterations < 128000) {
+			while(!value.equals(expected) && iterations < 256000) {
 				value = it.next();
 				iterations++;
 			}

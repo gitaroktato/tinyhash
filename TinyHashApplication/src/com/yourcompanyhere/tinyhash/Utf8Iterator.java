@@ -64,7 +64,7 @@ public class Utf8Iterator {
 	private void handleByteRangeOverflow(int charLastPos, int currentCharBytes) {
 		// Check if we can increment at any position before the last byte of current char:
 		for (int j = 1; j < currentCharBytes; j++) {
-			if (!isMaxAtPos(j)) {
+			if (!isMaxAtPos(charLastPos - j)) {
 				incrementCurrentByte(charLastPos - j);
 				// Zero out all other bytes.
 				for (int k = 0; k < j; k++) {
@@ -78,11 +78,13 @@ public class Utf8Iterator {
 			// Zero out bytes according to current char size.
 			zeroOutAllBytes(charLastPos, currentCharBytes);
 			// Increment next character.
-			lastByteOfCurrentChar = charLastPos - currentCharBytes; 
-			increment(charLastPos - currentCharBytes);
+			// TODO wrong! Shift byte array to right.
+			lastByteOfCurrentChar--;
+			increment(lastByteOfCurrentChar);
 		} else {
 			// We should increment current char bytes by one.
 			// TODO temp code write to all the byte sizes. TODO why not C0???
+			// TODO WRONG, shift the byte array to left.
 			currentText[charLastPos - currentCharBytes] = (byte) 0xC2;
 			currentText[charLastPos] = (byte) 0x80;
 		}

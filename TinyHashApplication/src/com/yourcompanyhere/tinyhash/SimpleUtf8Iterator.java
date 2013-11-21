@@ -15,7 +15,7 @@ public class SimpleUtf8Iterator {
 	private byte[] currentText = new byte[MAX_SIZE_IN_BYTES];
 	private boolean hasNext = true;
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
-	private CharsetDecoder decoder = UTF8_CHARSET.newDecoder();;
+	private CharsetDecoder decoder = UTF8_CHARSET.newDecoder();
 	
 	public String next() throws CharacterCodingException {
 		if (!hasNext) {
@@ -23,12 +23,13 @@ public class SimpleUtf8Iterator {
 		}
 		String result = null;
 		ByteBuffer data;
-		while (result == null) {
+		while (result == null && hasNext) {
 			try {
-				 data = ByteBuffer.wrap(currentText, currentPosition, MAX_SIZE_IN_BYTES - currentPosition);
+				data = ByteBuffer.wrap(currentText, currentPosition, MAX_SIZE_IN_BYTES - currentPosition);
 				result = decoder.decode(data).toString();
 			} catch (MalformedInputException ex) {
 				// We try to increment until decoder finds a valid value.
+				// Really slow!! Exception creation is very expensive.
 			}
 			increment();
 		}
@@ -36,11 +37,11 @@ public class SimpleUtf8Iterator {
 	}
 	
 	private void increment() {
-		if (currentText[MAX_SIZE_IN_BYTES - 1] != -1) {
+		if (currentText[MAX_SIZE_IN_BYTES - 1] != (byte)0x7F) {
 			currentText[MAX_SIZE_IN_BYTES - 1]++;
 		} else {
 			int i = MAX_SIZE_IN_BYTES - 1;
-			while (currentText[i] == -1) {
+			while (currentText[i] == (byte)0x7F) {
 				currentText[i] = 0;
 				if (--i < 0) {
 					hasNext = false;
@@ -48,7 +49,7 @@ public class SimpleUtf8Iterator {
 					currentText[i]++;
 				}
 			}
-			if (hasNext) {
+			if (hasNext && i < currentPosition) {
 				currentPosition = i; 
 			}
 		}
